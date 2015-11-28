@@ -43,14 +43,14 @@ def getLegalActions(position):
 	for act in actions:
 		nextPos = nextPosition(position, act)
 
-		if (nextPos[0] is 0 or nextPos[0] is x - 1): continue
-		if (nextPos[1] is 0 or nextPos[1] is y - 1): continue
+		if (nextPos[0] < 1 or nextPos[0] >= x - 1): continue
+		if (nextPos[1] < 1 or nextPos[1] >= y - 1): continue
 	
 		if (isLegal(nextPos, act)): legalMoves.append(act)
 	return legalMoves
 
-def backtrack():
-	position = stack[len(maze)-1]
+def backtrack(stack):
+	position = stack[len(stack)-1]
 	while (len(getLegalActions(position)) is not 0 or len(stack) is 0):
 		stack.pop()
 		position = stack[len(stack)-1]	
@@ -78,14 +78,12 @@ def main():
 	start = (1, 1)
 	maze[start] = ' '
 	stack = [start]
-	print(len(stack))
 	while (len(stack) is not 0):
 		position = stack[len(stack)-1]
 
 		legalActions = getLegalActions(position)
-		print(legalActions)
 		if (len(legalActions) is 0):
-			backtrack()
+			backtrack(stack)
 			continue
 
 		action = random.choice(legalActions)
