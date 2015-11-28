@@ -6,8 +6,9 @@ import collections
 
 # reverseAct = {"N": "S", "S": "N", "W": "E", "E": "W"}
 actions = ['N', 'S', 'E', 'W']
-
 maze = {}
+x = 0
+y = 0
 
 def nextPosition(position, direction):
 	if (direction is 'N'): return (position[0], position[1] + 1)
@@ -15,7 +16,7 @@ def nextPosition(position, direction):
 	if (direction is 'W'): return (position[0] - 1, position[1])
 	if (direction is 'S'): return (position[0], position[1] - 1)
 
-def isLegal(position, maze, action):
+def isLegal(position, action):
 	x = position[0]
 	y = position[1]
 
@@ -41,7 +42,11 @@ def getLegalActions(position):
 	legalMoves = []
 	for act in actions:
 		nextPos = nextPosition(position, act)
-		if isLegal(nextPos, act): legalMoves.append(act)
+
+		if (nextPos[0] is 0 or nextPos[0] is x - 1): continue
+		if (nextPos[1] is 0 or nextPos[1] is y - 1): continue
+	
+		if (isLegal(nextPos, act)): legalMoves.append(act)
 	return legalMoves
 
 def backtrack():
