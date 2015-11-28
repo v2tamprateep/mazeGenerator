@@ -58,24 +58,27 @@ def backtrack(stack, terminal):
 		position = stack[-1]
 
 def main():
-	try:
-		opts, arg = getopt.getopt(sys.argv[1:], "hx:y:", ["help"])
-	except getopt.GetoptError as err:
-		sys.exit(2)
-
 	global maze
 	global x
 	global y
 
-	x = 98
-	y = 20
+	try:
+		opts, arg = getopt.getopt(sys.argv[1:], "hx:y:", ["help", "output=", "x=", "y="])
+	except getopt.GetoptError as err:
+		sys.exit(2)
+
+	output = "defaultMazeOutput.txt"
 
 	for opt, arg in opts:
-		if opt == "x":
-			x = arg
-		if opt == "y":
-			y = arg
-	if (x is 0 or y is 0): sys.exit()
+		if opt in ("-x", "--x"):
+			x = int(arg)
+		if opt in ("-y", "--y"):
+			y = int(arg)
+		if opt == "--output":
+			output = arg
+	if (x <= 0 or y <= 0):
+		print("Invalid Dimensions")
+		sys.exit()
 
 	for i in range(0, x):
 		for j in range(0, y):
@@ -100,13 +103,13 @@ def main():
 			stack.append(position)
 
 	maze[random.choice(terminal)] = 'T'
-	"""
-	mazeFile = open('./test.txt', 'w')
+	#"""
+	mazeFile = open("./" + output, 'w')
 	for j in range(y-1, -1, -1):
 		for i in range(0, x):
 			mazeFile.write(maze[(i, j)])
 		mazeFile.write("\n")
-	"""
+	#"""
 	#"""
 	for j in range(y-1, -1, -1):
 		for i in range(0, x):
