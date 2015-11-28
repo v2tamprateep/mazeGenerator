@@ -4,7 +4,6 @@ import random
 import math
 import collections
 
-# reverseAct = {"N": "S", "S": "N", "W": "E", "E": "W"}
 actions = ['N', 'S', 'E', 'W']
 maze = {}
 x = 0
@@ -38,22 +37,25 @@ def isLegal(position, action):
 
 	return True
 
-def getLegalActions(position):
+def getLegalActions(position, stack, terminal):
 	legalMoves = []
 	for act in actions:
 		nextPos = nextPosition(position, act)
-
+		if (nextPos in terminal): continue
+		if (nextPos in stack): continue
 		if (nextPos[0] < 1 or nextPos[0] >= x - 1): continue
 		if (nextPos[1] < 1 or nextPos[1] >= y - 1): continue
-	
+
 		if (isLegal(nextPos, act)): legalMoves.append(act)
 	return legalMoves
 
-def backtrack(stack):
-	position = stack[len(stack)-1]
-	while (len(getLegalActions(position)) is not 0 or len(stack) is 0):
+def backtrack(stack, terminal):
+	position = stack[-1]
+	while (len(getLegalActions(position, stack, terminal)) is 0 or len(stack) is 0):
 		stack.pop()
-		position = stack[len(stack)-1]	
+		if (len(stack) is 0):
+			break
+		position = stack[-1]
 
 def main():
 	try:
@@ -61,8 +63,13 @@ def main():
 	except getopt.GetoptError as err:
 		sys.exit(2)
 
-	x = 10
-	y = 10
+	global maze
+	global x
+	global y
+
+	x = 98
+	y = 20
+
 	for opt, arg in opts:
 		if opt == "x":
 			x = arg
@@ -74,22 +81,25 @@ def main():
 		for j in range(0, y):
 			maze[(i, j)] = '%'
 
+	terminal = []
 	# start = (round(random.uniform(1, x)), round(random.uniform(1, y)))
 	start = (1, 1)
-	maze[start] = ' '
+	maze[start] = 'S'
 	stack = [start]
 	while (len(stack) is not 0):
-		position = stack[len(stack)-1]
+		position = stack[-1]
+		legalActions = getLegalActions(position, stack, terminal)
 
-		legalActions = getLegalActions(position)
 		if (len(legalActions) is 0):
-			backtrack(stack)
-			continue
+			terminal.append(position)
+			backtrack(stack, terminal)
+		else:
+			action = random.choice(legalActions)
+			position = nextPosition(position, action)
+			maze[position] = ' '
+			stack.append(position)
 
-		action = random.choice(legalActions)
-		position = nextPosition(position, action)
-		maze[position] = ' '
-		stack.append(position)
+	maze[random.choice(terminal)] = 'T'
 	"""
 	mazeFile = open('./test.txt', 'w')
 	for j in range(y-1, -1, -1):
@@ -97,13 +107,13 @@ def main():
 			mazeFile.write(maze[(i, j)])
 		mazeFile.write("\n")
 	"""
-
+	#"""
 	for j in range(y-1, -1, -1):
 		for i in range(0, x):
 			print(maze[(i, j)]),
 		print("")
-
-	print("end")
+	#"""
+	print("Complete")
 	sys.exit()
 
 if __name__ == "__main__":
