@@ -76,17 +76,18 @@ def main():
     HEIGHT = 30
     output = "default.txt"
     try:
-       opts, arg = getopt.getopt(sys.argv[1:], "hx:y:", ["help", "output"])
+       opts, args = getopt.getopt(sys.argv[1:], "hx:y:", ["help", "output="])
     except getopt.GetoptError as err:
        sys.exit(2)
     
     for opt, arg in opts:
-        if opt in ("-x", "--width="):
-            WIDTH = str(arg)
-        if opt in ("-y", "--height="):
-            HEIGHT = str(arg)
-        if opt is "--output=":
-            output = arg
+        if opt in ("-x", "--width"):
+            WIDTH = int(arg)
+        if opt in ("-y", "--height"):
+            HEIGHT = int(arg)
+        if opt == "--output":
+            output = str(arg)
+
     if (WIDTH is 0 or HEIGHT is 0):
         print("Invalid Dimensions")
         sys.exit()
