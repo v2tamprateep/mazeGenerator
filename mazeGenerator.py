@@ -100,6 +100,7 @@ def main():
     
     start = (1, 1)
     maze[start] = OPEN
+    terminal = []
     stack = [start]
     position = start
 
@@ -109,12 +110,15 @@ def main():
         maze[position] = OPEN
         legalActions = getLegalActions(position)       
         if (len(legalActions) is 0):
+            terminal.append(position)
             stack.pop()
             continue
         action = random.choice(legalActions)
         position = nextPosition(position, action)
         stack.append(position)
 
+    maze[start] = "S"
+    maze[random.choice(terminal)] = "T"
     printMaze()
     printToFile(output)
     sys.exit()
