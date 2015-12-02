@@ -6,12 +6,34 @@ import collections
 
 actions = ['N', 'S', 'E', 'W']
 maze = {}
-WIDTH = 30
-HEIGHT = 30
+WIDTH = 0
+HEIGHT = 0
+WALL = '%'
+OPEN = ' '
+distribution = [1,1,55,55]
 
-WALL = '*'
-OPEN = 'O'
 
+def randElt(ls, distribution):
+        
+    n = len(ls)
+    S = sum(distribution)
+    r = random.uniform(0,S)
+    for i in range(0,n):
+        r -= distribution[i]
+        if r <= 0: return ls[i]
+        
+    return ls[0]
+
+def nextAction(legalActions):
+    newDist = list([0,0,0,0])
+    newDist[0] = 0
+    for i in range(0,len(actions)):
+        if actions[i] in legalActions:
+            newDist[i] = distribution[i]
+        else:
+            newDist[i] = 0
+    return randElt(actions,newDist)
+         
 def nextPosition(position, direction):
     if (direction is 'N'): return (position[0], position[1] + 1)
     if (direction is 'E'): return (position[0] + 1, position[1])
@@ -45,7 +67,6 @@ def isLegal(nextSquare):
     
     return True
 
-<<<<<<< HEAD
 def getLegalActions(position):
     legalMoves = []
     for act in actions:       
@@ -57,7 +78,7 @@ def getLegalActions(position):
     return legalMoves
 
 def printMaze():
-   #for j in range(HEIGHT-1, -1, -1):
+
     for j in range(0,HEIGHT):
       for i in range(0, WIDTH):
          print(maze[(i, j)], end=""),
@@ -74,8 +95,8 @@ def printToFile():
 def main():
     global WIDTH
     global HEIGHT
-    WIDTH = 30
-    HEIGHT = 30
+    WIDTH = 40
+    HEIGHT = 40
     try:
        opts, arg = getopt.getopt(sys.argv[1:], "hx:y:", ["help"])
     except getopt.GetoptError as err:
@@ -106,95 +127,15 @@ def main():
         if (len(legalActions) is 0):
             stack.pop()
             continue
-        action = random.choice(legalActions)
+ #       action = random.choice(legalActions)
+        action = nextAction(legalActions)
+        #print(action)
         position = nextPosition(position, action)
         stack.append(position)
 
-    printMaze()   
+    printMaze()
+    
     sys.exit()
-=======
-def getLegalActions(position, stack, terminal):
-	legalMoves = []
-	for act in actions:
-		nextPos = nextPosition(position, act)
-		if (nextPos in terminal): continue
-		if (nextPos in stack): continue
-		if (nextPos[0] < 1 or nextPos[0] >= x - 1): continue
-		if (nextPos[1] < 1 or nextPos[1] >= y - 1): continue
-
-		if (isLegal(nextPos, act)): legalMoves.append(act)
-	return legalMoves
-
-def backtrack(stack, terminal):
-	position = stack[-1]
-	while (len(getLegalActions(position, stack, terminal)) is 0 or len(stack) is 0):
-		stack.pop()
-		if (len(stack) is 0):
-			break
-		position = stack[-1]
-
-def main():
-	global maze
-	global x
-	global y
-
-	try:
-		opts, arg = getopt.getopt(sys.argv[1:], "hx:y:", ["help", "output=", "x=", "y="])
-	except getopt.GetoptError as err:
-		sys.exit(2)
-
-	output = "defaultMazeOutput.txt"
-
-	for opt, arg in opts:
-		if opt in ("-x", "--x"):
-			x = int(arg)
-		if opt in ("-y", "--y"):
-			y = int(arg)
-		if opt == "--output":
-			output = arg
-	if (x <= 0 or y <= 0):
-		print("Invalid Dimensions")
-		sys.exit()
-
-	for i in range(0, x):
-		for j in range(0, y):
-			maze[(i, j)] = '%'
-
-	terminal = []
-	# start = (round(random.uniform(1, x)), round(random.uniform(1, y)))
-	start = (1, 1)
-	maze[start] = 'S'
-	stack = [start]
-	while (len(stack) is not 0):
-		position = stack[-1]
-		legalActions = getLegalActions(position, stack, terminal)
-
-		if (len(legalActions) is 0):
-			terminal.append(position)
-			backtrack(stack, terminal)
-		else:
-			action = random.choice(legalActions)
-			position = nextPosition(position, action)
-			maze[position] = ' '
-			stack.append(position)
-
-	maze[random.choice(terminal)] = 'T'
-	#"""
-	mazeFile = open("./" + output, 'w')
-	for j in range(y-1, -1, -1):
-		for i in range(0, x):
-			mazeFile.write(maze[(i, j)])
-		mazeFile.write("\n")
-	#"""
-	#"""
-	for j in range(y-1, -1, -1):
-		for i in range(0, x):
-			print(maze[(i, j)]),
-		print("")
-	#"""
-	print("Complete")
-	sys.exit()
->>>>>>> 104ae88da7c21586ac6d3a949733e6a308253098
 
 if __name__ == "__main__":
     main()
