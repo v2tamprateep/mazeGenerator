@@ -6,12 +6,20 @@ import collections
 
 actions = ['N', 'S', 'E', 'W']
 maze = {}
+<<<<<<< HEAD
 WIDTH = 0
 HEIGHT = 0
 WALL = '%'
 OPEN = ' '
 distribution = [1,1,55,55]
 
+=======
+WIDTH = 25
+HEIGHT = 25
+
+WALL = '%'
+OPEN = ' '
+>>>>>>> 27570132a4843e1c2c7c28242cbf1a36ad528731
 
 def randElt(ls, distribution):
         
@@ -58,7 +66,6 @@ def removable(position):
 
     return not(numOpen > 1)
         
-
 def isLegal(nextSquare):
 
     if onBoundary(nextSquare): return False
@@ -78,6 +85,7 @@ def getLegalActions(position):
     return legalMoves
 
 def printMaze():
+<<<<<<< HEAD
 
     for j in range(0,HEIGHT):
       for i in range(0, WIDTH):
@@ -86,6 +94,16 @@ def printMaze():
 
 def printToFile():
     mazeFile = open('./test.txt', 'w')
+=======
+    for j in range(HEIGHT-1, -1, -1):
+   # for j in range(0,HEIGHT):
+        for i in range(0, WIDTH):
+            print(maze[(i, j)]),
+        print("")
+
+def printToFile(ofile):
+    mazeFile = open('./'+ofile, 'w')
+>>>>>>> 27570132a4843e1c2c7c28242cbf1a36ad528731
     for j in range(HEIGHT-1, -1, -1):
         for i in range(0, WIDTH):
             mazeFile.write(maze[(i, j)])
@@ -95,19 +113,30 @@ def printToFile():
 def main():
     global WIDTH
     global HEIGHT
+<<<<<<< HEAD
     WIDTH = 40
     HEIGHT = 40
+=======
+    WIDTH = 30
+    HEIGHT = 30
+    output = "default.txt"
+>>>>>>> 27570132a4843e1c2c7c28242cbf1a36ad528731
     try:
-       opts, arg = getopt.getopt(sys.argv[1:], "hx:y:", ["help"])
+       opts, args = getopt.getopt(sys.argv[1:], "hx:y:", ["help", "output="])
     except getopt.GetoptError as err:
        sys.exit(2)
     
     for opt, arg in opts:
-       if opt == "x":
-           WIDTH = arg
-       if opt == "y":
-           HEIGHT = arg
-    if (WIDTH is 0 or HEIGHT is 0): sys.exit()
+        if opt in ("-x", "--width"):
+            WIDTH = int(arg)
+        if opt in ("-y", "--height"):
+            HEIGHT = int(arg)
+        if opt == "--output":
+            output = str(arg)
+
+    if (WIDTH is 0 or HEIGHT is 0):
+        print("Invalid Dimensions")
+        sys.exit()
 
     for i in range(0, WIDTH):
        for j in range(0, HEIGHT):
@@ -117,14 +146,17 @@ def main():
     
     start = (1, 1)
     maze[start] = OPEN
+    terminal = []
     stack = [start]
-    position = stack[len(stack)-1]
+    position = start
 
+    print("Width: " + str(WIDTH) + ", Height: " + str(HEIGHT) + ", Output file: " + output)
     while (len(stack) is not 0):
-        position = stack[len(stack)-1]
+        position = stack[-1]
         maze[position] = OPEN
         legalActions = getLegalActions(position)       
         if (len(legalActions) is 0):
+            terminal.append(position)
             stack.pop()
             continue
  #       action = random.choice(legalActions)
@@ -133,10 +165,16 @@ def main():
         position = nextPosition(position, action)
         stack.append(position)
 
+<<<<<<< HEAD
     printMaze()
     
+=======
+    maze[start] = "S"
+    maze[random.choice(terminal)] = "T"
+    printMaze()
+    printToFile(output)
+>>>>>>> 27570132a4843e1c2c7c28242cbf1a36ad528731
     sys.exit()
 
 if __name__ == "__main__":
     main()
-
